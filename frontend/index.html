@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FileVault - Secure Cloud Storage</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Auth Container -->
+  <div id="auth-container" class="auth-container">
+    <!-- Login Page -->
+    <div id="login-page" class="auth-page active">
+      <div class="auth-box">
+        <div class="auth-header">
+          <h1>FileVault</h1>
+          <p>Secure Cloud Storage</p>
+        </div>
+
+        <form id="login-form" class="auth-form">
+          <div class="form-group">
+            <label for="login-email">Email or Phone</label>
+            <input type="text" id="login-email" name="email" placeholder="your@email.com or +1234567890" required />
+          </div>
+
+          <div class="form-group">
+            <label for="login-password">Password</label>
+            <input type="password" id="login-password" name="password" placeholder="Enter your password" required />
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+        </form>
+
+        <div class="auth-footer">
+          <p>
+            Don't have an account?
+            <button type="button" class="link-btn" onclick="switchPage('register')">Create one</button>
+          </p>
+        </div>
+
+        <div id="login-error" class="error-message"></div>
+        <div id="login-loading" class="loading-spinner" style="display: none"></div>
+      </div>
+    </div>
+
+    <!-- Register Page -->
+    <div id="register-page" class="auth-page">
+      <div class="auth-box">
+        <div class="auth-header">
+          <h1>Create Account</h1>
+          <p>Join FileVault Today</p>
+        </div>
+
+        <form id="register-form" class="auth-form">
+          <div class="form-group">
+            <label for="register-fullname">Full Name</label>
+            <input type="text" id="register-fullname" name="fullName" placeholder="John Doe" required />
+          </div>
+
+          <div class="form-group">
+            <label for="register-email">Email *</label>
+            <input type="email" id="register-email" name="email" placeholder="your@email.com" required />
+          </div>
+
+          <div class="form-group">
+            <label for="register-phone">Phone (Optional)</label>
+            <input type="tel" id="register-phone" name="phone" placeholder="+1234567890" />
+          </div>
+
+          <div class="form-group">
+            <label for="register-password">Password</label>
+            <input
+              type="password"
+              id="register-password"
+              name="password"
+              placeholder="At least 8 characters"
+              minlength="8"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="register-confirm">Confirm Password</label>
+            <input type="password" id="register-confirm" name="confirm" placeholder="Confirm password" required />
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+        </form>
+
+        <div class="auth-footer">
+          <p>
+            Already have an account?
+            <button type="button" class="link-btn" onclick="switchPage('login')">Sign in</button>
+          </p>
+        </div>
+
+        <div id="register-error" class="error-message"></div>
+        <div id="register-loading" class="loading-spinner" style="display: none"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- User Dashboard -->
+  <div id="user-dashboard" class="dashboard" style="display: none">
+    <nav class="sidebar">
+      <div class="sidebar-header">
+        <h2>FileVault</h2>
+        <button class="sidebar-toggle" id="sidebar-toggle">☰</button>
+      </div>
+
+      <div class="sidebar-menu">
+        <button class="menu-item active" onclick="showTab('files')">
+          <span class="icon">📁</span>
+          <span>My Files</span>
+        </button>
+        <button class="menu-item" onclick="showTab('settings')">
+          <span class="icon">⚙️</span>
+          <span>Settings</span>
+        </button>
+        <button class="menu-item" onclick="logout()">
+          <span class="icon">🚪</span>
+          <span>Logout</span>
+        </button>
+      </div>
+    </nav>
+
+    <main class="dashboard-content">
+      <div class="dashboard-header">
+        <div class="user-info">
+          <span id="user-name">User</span>
+          <span id="user-email" class="user-email"></span>
+        </div>
+      </div>
+
+      <!-- Files Tab -->
+      <div id="files-tab" class="tab-content active">
+        <div class="files-header">
+          <h2>My Files</h2>
+          <button class="btn btn-primary" onclick="openUploadModal()">+ Upload File</button>
+        </div>
+
+        <div class="search-bar">
+          <input type="text" id="search-files" placeholder="Search files..." onkeyup="searchFiles()" />
+          <select id="sort-select" onchange="sortFiles()">
+            <option value="uploadDate-desc">Latest First</option>
+            <option value="uploadDate-asc">Oldest First</option>
+            <option value="fileName-asc">Name (A-Z)</option>
+            <option value="fileName-desc">Name (Z-A)</option>
+            <option value="fileSize-desc">Largest First</option>
+            <option value="fileSize-asc">Smallest First</option>
+          </select>
+        </div>
+
+        <div id="files-container" class="files-grid">
+          <div class="empty-state">
+            <p>📁 No files yet. Upload one to get started!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings Tab -->
+      <div id="settings-tab" class="tab-content">
+        <div class="settings-section">
+          <h2>Account Settings</h2>
+
+          <div class="setting-item">
+            <label>Full Name</label>
+            <input type="text" id="setting-fullname" />
+          </div>
+
+          <div class="setting-item">
+            <label>Email</label>
+            <input type="email" id="setting-email" disabled />
+          </div>
+
+          <div class="setting-item">
+            <label>Phone</label>
+            <input type="tel" id="setting-phone" />
+          </div>
+
+          <button class="btn btn-primary" onclick="updateProfile()">Save Changes</button>
+        </div>
+
+        <div class="settings-section">
+          <h2>Storage</h2>
+          <div id="storage-info"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Admin Dashboard -->
+  <div id="admin-dashboard" class="dashboard" style="display: none">
+    <nav class="sidebar">
+      <div class="sidebar-header">
+        <h1>FileVault Admin</h1>
+        <button class="sidebar-toggle" id="admin-sidebar-toggle">☰</button>
+      </div>
+
+      <div class="sidebar-menu">
+        <button class="menu-item active" onclick="showAdminTab('users')">
+          <span class="icon">👥</span>
+          <span>Users</span>
+        </button>
+        <button class="menu-item" onclick="showAdminTab('files')">
+          <span class="icon">📁</span>
+          <span>Files</span>
+        </button>
+        <button class="menu-item" onclick="showAdminTab('activity')">
+          <span class="icon">📊</span>
+          <span>Activity</span>
+        </button>
+        <button class="menu-item" onclick="logout()">
+          <span class="icon">🚪</span>
+          <span>Logout</span>
+        </button>
+      </div>
+    </nav>
+
+    <main class="dashboard-content">
+      <div class="dashboard-header">
+        <h2>Admin Control Panel</h2>
+      </div>
+
+      <!-- Users Tab -->
+      <div id="admin-users-tab" class="tab-content active">
+        <div class="admin-header">
+          <h2>User Management</h2>
+          <input
+            type="text"
+            id="admin-search-users"
+            placeholder="Search users by email, phone, or name..."
+            onkeyup="adminSearchUsers()"
+          />
+        </div>
+
+        <div id="admin-users-container" class="users-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Email</th>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Storage Used</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="admin-users-list"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Files Tab -->
+      <div id="admin-files-tab" class="tab-content">
+        <div class="admin-header">
+          <h2>File Management</h2>
+        </div>
+
+        <div id="admin-files-container" class="files-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>File Name</th>
+                <th>Owner</th>
+                <th>Size</th>
+                <th>Upload Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="admin-files-list"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Activity Tab -->
+      <div id="admin-activity-tab" class="tab-content">
+        <div class="admin-header">
+          <h2>System Statistics</h2>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value" id="stat-users">0</div>
+            <div class="stat-label">Total Users</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="stat-files">0</div>
+            <div class="stat-label">Total Files</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="stat-storage">0 GB</div>
+            <div class="stat-label">Total Storage</div>
+          </div>
+        </div>
+
+        <div class="activity-section">
+          <h3>Recent Activity</h3>
+          <div id="activity-list" class="activity-log"></div>
+        </div>
+
+        <div class="top-storage-section">
+          <h3>Top Storage Users</h3>
+          <div id="top-storage-users"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Upload Modal -->
+  <div id="upload-modal" class="modal" style="display: none">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Upload File</h2>
+        <button class="close-btn" onclick="closeUploadModal()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="upload-area" id="upload-area">
+          <input type="file" id="file-input" style="display: none" onchange="handleFileSelect()" />
+          <p>Drag and drop your file here or</p>
+          <button type="button" class="btn btn-secondary" onclick="document.getElementById('file-input').click()">
+            Choose File
+          </button>
+          <p class="upload-hint">Max file size: 500MB</p>
+        </div>
+
+        <div id="file-preview" style="display: none">
+          <p>Selected: <strong id="file-name"></strong></p>
+          <div class="progress-bar">
+            <div id="upload-progress" class="progress"></div>
+          </div>
+          <p id="progress-text">Ready to upload</p>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeUploadModal()">Cancel</button>
+        <button class="btn btn-primary" id="upload-btn" onclick="uploadFile()" style="display: none">Upload</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- User Detail Modal -->
+  <div id="user-detail-modal" class="modal" style="display: none">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>User Details</h2>
+        <button class="close-btn" onclick="closeUserModal()">✕</button>
+      </div>
+
+      <div class="modal-body" id="user-detail-content"></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

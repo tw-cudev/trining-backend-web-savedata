@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard - File Storage</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="dashboard-wrapper">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2 class="logo">FileVault</h2>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-section="files">
+          <span class="icon">📁</span> My Files
+        </button>
+        <button class="nav-item" data-section="upload">
+          <span class="icon">⬆️</span> Upload
+        </button>
+        <button class="nav-item" data-section="settings">
+          <span class="icon">⚙️</span> Settings
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button id="logoutBtn" class="btn btn-logout">Logout</button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+      <!-- Header -->
+      <header class="dashboard-header">
+        <div class="header-left">
+          <h1>My Files</h1>
+        </div>
+        <div class="header-right">
+          <div class="user-info">
+            <span id="userName">User</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Content Area -->
+      <div class="dashboard-content">
+        <!-- Files Section -->
+        <section id="filesSection" class="content-section active">
+          <div class="section-header">
+            <div class="search-box">
+              <input type="text" id="searchInput" placeholder="Search files..." />
+            </div>
+            <div class="sort-box">
+              <select id="sortSelect">
+                <option value="date">Sort by Date</option>
+                <option value="name">Sort by Name</option>
+                <option value="size">Sort by Size</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="stats">
+            <div class="stat-card">
+              <h3>Total Files</h3>
+              <p id="totalFiles">0</p>
+            </div>
+            <div class="stat-card">
+              <h3>Storage Used</h3>
+              <p id="storageUsed">0 MB</p>
+            </div>
+          </div>
+
+          <div class="files-container">
+            <table class="files-table">
+              <thead>
+                <tr>
+                  <th>File Name</th>
+                  <th>Type</th>
+                  <th>Size</th>
+                  <th>Upload Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="filesTableBody">
+                <tr class="empty-state">
+                  <td colspan="5">No files yet. Start by uploading one.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Upload Section -->
+        <section id="uploadSection" class="content-section">
+          <div class="upload-container">
+            <div class="upload-area" id="uploadArea">
+              <div class="upload-icon">📤</div>
+              <h2>Upload Files</h2>
+              <p>Drag and drop files here or click to select</p>
+              <input type="file" id="fileInput" multiple style="display: none" />
+            </div>
+
+            <div class="upload-progress" id="uploadProgress" style="display: none">
+              <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+              </div>
+              <p id="uploadStatus">Uploading...</p>
+            </div>
+
+            <div id="uploadedFiles" class="uploaded-files"></div>
+          </div>
+        </section>
+
+        <!-- Settings Section -->
+        <section id="settingsSection" class="content-section">
+          <div class="settings-container">
+            <h2>Account Settings</h2>
+            <div class="setting-item">
+              <h3>Account Information</h3>
+              <p>Email: <span id="settingsEmail">-</span></p>
+              <p>Phone: <span id="settingsPhone">-</span></p>
+              <p>Full Name: <span id="settingsName">-</span></p>
+            </div>
+
+            <div class="setting-item">
+              <h3>Storage Information</h3>
+              <p>Total Storage Used: <span id="settingsStorage">0 MB</span></p>
+            </div>
+
+            <button id="deleteAccountBtn" class="btn btn-danger">Delete Account</button>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- File Preview Modal -->
+  <div id="previewModal" class="modal">
+    <div class="modal-content">
+      <span class="modal-close">&times;</span>
+      <div id="previewContent"></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script src="dashboard-script.js"></script>
+</body>
+</html>

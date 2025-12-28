@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - File Storage</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="auth-container">
+    <div class="auth-card">
+      <div class="auth-header">
+        <h1>Welcome Back</h1>
+        <p>Sign in to your account</p>
+      </div>
+
+      <form id="loginForm" class="auth-form">
+        <div class="form-group">
+          <label for="emailPhone">Email or Phone Number</label>
+          <input type="text" id="emailPhone" placeholder="Enter your email or phone" required />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="Enter your password" required />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Sign In</button>
+
+        <div class="error-message" id="errorMessage"></div>
+      </form>
+
+      <div class="auth-footer">
+        <p>Don't have an account? <a href="register.html">Create one</a></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    // Login form handler
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault()
+
+      const emailPhone = document.getElementById("emailPhone").value
+      const password = document.getElementById("password").value
+      const errorMessage = document.getElementById("errorMessage")
+
+      errorMessage.textContent = ""
+
+      try {
+        // Determine if input is email or phone
+        const isEmail = emailPhone.includes("@")
+        const payload = isEmail
+          ? { email: emailPhone, password }
+          : { phone: emailPhone, password }
+
+        const response = await fetch("http://localhost:5000/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        })
+
+        const data = await response.json()
+
+        if (response.ok) {
+          // Store token and redirect
+          localStorage.setItem("token", data.token)
+          localStorage.setItem("user", JSON.stringify(data.user))
+          window.location.href = "dashboard.html"
+        } else {
+          errorMessage.textContent = data.error || "Login failed"
+        }
+      } catch (error) {
+        errorMessage.textContent = "Network error. Please try again."
+        console.error("Login error:", error)
+      }
+    })
+  </script>
+</body>
+</html>
